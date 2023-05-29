@@ -1,7 +1,7 @@
 package org.vivecraft.mixin.client.gui.screens;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.screens.*;
 import net.minecraft.network.chat.Component;
@@ -70,18 +70,18 @@ public abstract class TitleScreenMixin extends Screen {
         return (showError ? "§c\u26A0§r " : "");
     }
 
-    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/Screen;render(Lcom/mojang/blaze3d/vertex/PoseStack;IIF)V", shift = At.Shift.BEFORE, ordinal = 0), method = "render")
-    public void renderText(PoseStack poseStack, int i, int j, float f, CallbackInfo ci) {
+    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/Screen;render(Lnet/minecraft/client/gui/GuiGraphics;IIF)V", shift = At.Shift.BEFORE, ordinal = 0), method = "render")
+    public void renderText(GuiGraphics guiGraphics, int i, int j, float f, CallbackInfo ci) {
         int l = vrModeButton.getY() - 23;
-        drawString(poseStack, this.font, "Vivecraft", this.width / 2 + 106, l, 16777215);
-        drawString(poseStack, this.font, Component.translatable("vivecraft.messages.mode"), this.width / 2 + 106, l + 10, 16777215);
+        guiGraphics.drawString(this.font, "Vivecraft", this.width / 2 + 106, l, 16777215);
+        guiGraphics.drawString(this.font, Component.translatable("vivecraft.messages.mode"), this.width / 2 + 106, l + 10, 16777215);
     }
 
     @Inject(at = @At("TAIL"), method = "render")
-    public void renderWarning(PoseStack poseStack, int i, int j, float f, CallbackInfo ci) {
+    public void renderWarning(GuiGraphics guiGraphics, int i, int j, float f, CallbackInfo ci) {
 
         if (vrModeButton.isMouseOver(i, j)) {
-            renderTooltip(poseStack, font.split(Component.translatable("vivecraft.options.VR_MODE.tooltip"), Math.max(width / 2 - 43, 170)), i, j);
+            guiGraphics.renderTooltip(font, font.split(Component.translatable("vivecraft.options.VR_MODE.tooltip"), Math.max(width / 2 - 43, 170)), i, j);
         }
 
         int warningHeight = firstButton.getY() - 10;
@@ -96,13 +96,13 @@ public abstract class TitleScreenMixin extends Screen {
                 length = Math.max(length, this.font.width(string));
             }
             // move in front of button tooltips
-            poseStack.pushPose();
-            poseStack.translate(0, 0, 500);
-            GuiComponent.fill(poseStack, this.width / 2 - length / 2 - 4, warningHeight - 4, this.width / 2 + length / 2 + 4, warningHeight + (font.lineHeight + 3) * splitString.size(), -536870912);
+            guiGraphics.pose().pushPose();
+            guiGraphics.pose().translate(0, 0, 500);
+            guiGraphics.fill(this.width / 2 - length / 2 - 4, warningHeight - 4, this.width / 2 + length / 2 + 4, warningHeight + (font.lineHeight + 3) * splitString.size(), -536870912);
             for (int line = 0; line < splitString.size(); line++) {
-                drawCenteredString(poseStack, this.font, splitString.get(line), this.width / 2, warningHeight + (font.lineHeight + 2) * line, 16777215);
+                guiGraphics.drawCenteredString(this.font, splitString.get(line), this.width / 2, warningHeight + (font.lineHeight + 2) * line, 16777215);
             }
-            poseStack.popPose();
+            guiGraphics.pose().popPose();
         }
     }
 }

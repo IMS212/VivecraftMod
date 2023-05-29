@@ -1,5 +1,6 @@
 package org.vivecraft.client_vr.gui;
 
+import net.minecraft.client.gui.GuiGraphics;
 import org.vivecraft.client_vr.gui.framework.TwoHandedScreen;
 import org.vivecraft.client_vr.provider.MCVR;
 import org.vivecraft.client_vr.provider.openvr_lwjgl.VRInputAction;
@@ -134,9 +135,9 @@ public class GuiRadial extends TwoHandedScreen
         }
     }
 
-    public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks)
+    public void render(GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks)
     {
-        this.renderBackground(pMatrixStack);
-        super.render(pMatrixStack, 0, 0, pPartialTicks);
+        this.renderBackground(guiGraphics);
+        super.render(guiGraphics, 0, 0, pPartialTicks);
     }
 }

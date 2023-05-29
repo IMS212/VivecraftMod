@@ -61,10 +61,11 @@ public class KeyboardHandlerVRMixin {
         ClientDataHolderVR.getInstance().grabScreenShot = true;
     }
 
-    @Redirect(at = @At(value = "FIELD", target = "Lnet/minecraft/client/gui/screens/Screen;passEvents:Z"), method = "keyPress")
-    public boolean passEvents(Screen instance) {
-        return instance.passEvents && !MethodHolder.isKeyDown(345);
-    }
+    // TODO 1.20
+    //@Redirect(at = @At(value = "FIELD", target = "Lnet/minecraft/client/gui/screens/Screen;passEvents:Z"), method = "keyPress")
+    //public boolean passEvents(Screen instance) {
+    //    return instance.passEvents && !MethodHolder.isKeyDown(345);
+    //}
 
     //TODO really bad
     @Redirect(at = @At(value = "FIELD", target = "Lnet/minecraft/client/Minecraft;screen:Lnet/minecraft/client/gui/screens/Screen;", ordinal = 2), method = "keyPress")

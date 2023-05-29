@@ -8,12 +8,14 @@ import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.platform.WindowEventHandler;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexSorting;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.*;
 import net.minecraft.client.Timer;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.LoadingOverlay;
 import net.minecraft.client.gui.screens.Overlay;
 import net.minecraft.client.gui.screens.Screen;
@@ -25,6 +27,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.FogRenderer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.RenderBuffers;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.server.IntegratedServer;
@@ -236,8 +239,6 @@ public abstract class MinecraftVRMixin extends ReentrantBlockableEventLoop<Runna
     @Shadow
     public abstract Entity getCameraEntity();
 
-    @Shadow
-    protected abstract void renderFpsMeter(PoseStack poseStack, ProfileResults fpsPieResults2);
 
     @Shadow
     public abstract boolean hasSingleplayerServer();
@@ -269,6 +270,10 @@ public abstract class MinecraftVRMixin extends ReentrantBlockableEventLoop<Runna
     @Shadow @Nullable public abstract ClientPacketListener getConnection();
 
     @Shadow @Final public LevelRenderer levelRenderer;
+
+    @Shadow @Final private RenderBuffers renderBuffers;
+
+    @Shadow protected abstract void renderFpsMeter(GuiGraphics guiGraphics, ProfileResults profileResults);
 
     @Inject(method = "<init>", at = @At("RETURN"))
     void afterInit(GameConfig gameConfig, CallbackInfo ci) {
@@ -376,6 +381,8 @@ public abstract class MinecraftVRMixin extends ReentrantBlockableEventLoop<Runna
 //		RenderSystem.clear(16640, ON_OSX);
 //		this.mainRenderTarget.bindWrite(true);
 
+        GuiGraphics guiGraphics = new GuiGraphics(((Minecraft) (Object) this), this.renderBuffers.bufferSource());
+
         // v
         try {
             this.checkGLError("pre render setup ");
@@ -464,7 +471,7 @@ public abstract class MinecraftVRMixin extends ReentrantBlockableEventLoop<Runna
             this.mainRenderTarget.clear(Minecraft.ON_OSX);
             this.mainRenderTarget.bindWrite(true);
             ((GameRendererExtension) this.gameRenderer).drawScreen(f,
-                    KeyboardHandler.UI, new PoseStack());
+                    KeyboardHandler.UI, guiGraphics);
         }
         //
 
@@ -485,7 +492,7 @@ public abstract class MinecraftVRMixin extends ReentrantBlockableEventLoop<Runna
             this.mainRenderTarget = RadialHandler.Framebuffer;
             this.mainRenderTarget.clear(Minecraft.ON_OSX);
             this.mainRenderTarget.bindWrite(true);
-            ((GameRendererExtension) this.gameRenderer).drawScreen(f, RadialHandler.UI, new PoseStack());
+            ((GameRendererExtension) this.gameRenderer).drawScreen(f, RadialHandler.UI, guiGraphics);
         }
 
         this.profiler.pop();
@@ -651,10 +658,11 @@ public abstract class MinecraftVRMixin extends ReentrantBlockableEventLoop<Runna
             Matrix4f matrix4f = new Matrix4f().setOrtho(
                     0, (float) (this.window.getScreenWidth() / this.window.getGuiScale()),
                     (float) (this.window.getScreenHeight() / this.window.getGuiScale()), 0, 1000.0F, 3000.0F);
-            RenderSystem.setProjectionMatrix(matrix4f);
-            PoseStack p = new PoseStack();
-            p.translate(0, 0, -2000);
-            this.overlay.render(p, 0, 0, 0.0F);
+            RenderSystem.setProjectionMatrix(matrix4f, VertexSorting.ORTHOGRAPHIC_Z);
+            // TODO 1.20
+           // PoseStack p = new PoseStack();
+            //p.translate(0, 0, -2000);
+            //this.overlay.render(p, 0, 0, 0.0F);
         } else {
             if (MethodHolder.isKeyDown(GLFW.GLFW_KEY_Q)) {
                 System.out.println("Resetting VR status!");
@@ -780,7 +788,7 @@ public abstract class MinecraftVRMixin extends ReentrantBlockableEventLoop<Runna
     public void drawProfiler() {
         if (this.fpsPieResults != null) {
             this.profiler.push("fpsPie");
-            this.renderFpsMeter(new PoseStack(), this.fpsPieResults);
+            this.renderFpsMeter(new GuiGraphics(((Minecraft) (Object) this), this.renderBuffers.bufferSource()), this.fpsPieResults);
             this.profiler.pop();
         }
     }
@@ -990,13 +998,11 @@ public abstract class MinecraftVRMixin extends ReentrantBlockableEventLoop<Runna
             RenderSystem.viewport(0, 0, this.window.getScreenWidth(), this.window.getScreenHeight());
             Matrix4f matrix4f = new Matrix4f().setOrtho(0.0F, (float) this.window.getScreenWidth(),
                     (float) this.window.getScreenHeight(), 0.0F, 1000.0F, 3000.0F);
-            RenderSystem.setProjectionMatrix(matrix4f);
+            RenderSystem.setProjectionMatrix(matrix4f, VertexSorting.ORTHOGRAPHIC_Z);
             RenderSystem.getModelViewStack().pushPose();
             RenderSystem.getModelViewStack().setIdentity();
             RenderSystem.getModelViewStack().translate(0, 0, -2000);
             RenderSystem.applyModelViewMatrix();
-            PoseStack p = new PoseStack();
-            p.scale(3, 3, 3);
             RenderSystem.clear(256, ON_OSX);
 
             if (this.mirrorNotifyClear) {
@@ -1014,10 +1020,14 @@ public abstract class MinecraftVRMixin extends ReentrantBlockableEventLoop<Runna
             int j = 1;
             int k = 12;
 
+            GuiGraphics guiGraphics = new GuiGraphics((Minecraft) (Object) this, this.renderBuffers.bufferSource());
+            guiGraphics.pose().scale(3, 3, 3);
             for (String s : arraylist) {
-                this.font.draw(p, s, 1.0F, (float) j, 16777215);
+                guiGraphics.drawString(font, s, 1, j, 16777215);
                 j += 12;
             }
+
+            guiGraphics.flush();
             RenderSystem.getModelViewStack().popPose();
         }
     }

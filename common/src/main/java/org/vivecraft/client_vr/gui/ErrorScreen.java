@@ -2,6 +2,7 @@ package org.vivecraft.client_vr.gui;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -38,19 +39,19 @@ public class ErrorScreen extends Screen {
     }
 
     @Override
-    public void render(@NotNull PoseStack poseStack, int i, int j, float f) {
-        this.renderBackground(poseStack);
-        drawCenteredString(poseStack, this.font, this.title, this.width / 2, 15, 16777215);
+    public void render(@NotNull GuiGraphics guiGraphics, int i, int j, float f) {
+        this.renderBackground(guiGraphics);
+        guiGraphics.drawCenteredString( this.font, this.title, this.width / 2, 15, 16777215);
 
-        fill(poseStack, this.width / 2 - 155, 30, this.width / 2 + 155, this.height / 6 + 168 - 8, -6250336);
-        fill(poseStack, this.width / 2 - 155 + 1, 30 + 1, this.width / 2 + 155 - 1, this.height / 6 + 168 - 8 - 1, -16777216);
+        guiGraphics.fill(this.width / 2 - 155, 30, this.width / 2 + 155, this.height / 6 + 168 - 8, -6250336);
+        guiGraphics.fill(this.width / 2 - 155 + 1, 30 + 1, this.width / 2 + 155 - 1, this.height / 6 + 168 - 8 - 1, -16777216);
 
         List<FormattedText> formattedText = font.getSplitter().splitLines(error, 300, Style.EMPTY);
         for (int line = 0; line < formattedText.size(); line++) {
-            drawString(poseStack, this.font, formattedText.get(line).getString(), this.width / 2 - 150, 35 + line * 12, 16777215);
+            guiGraphics.drawString(this.font, formattedText.get(line).getString(), this.width / 2 - 150, 35 + line * 12, 16777215);
         }
 
 
-        super.render(poseStack, i, j, f);
+        super.render(guiGraphics, i, j, f);
     }
 }

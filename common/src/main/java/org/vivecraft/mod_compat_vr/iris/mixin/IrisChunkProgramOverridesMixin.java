@@ -1,7 +1,7 @@
 package org.vivecraft.mod_compat_vr.iris.mixin;
 
 import me.jellysquid.mods.sodium.client.gl.shader.GlProgram;
-import me.jellysquid.mods.sodium.client.render.chunk.vertex.format.ChunkVertexType;
+import me.jellysquid.mods.sodium.client.render.vertex.type.ChunkVertexType;
 import net.coderbot.iris.Iris;
 import net.coderbot.iris.compat.sodium.impl.shader_overrides.IrisChunkProgramOverrides;
 import net.coderbot.iris.compat.sodium.impl.shader_overrides.IrisChunkShaderInterface;
@@ -34,8 +34,8 @@ public class IrisChunkProgramOverridesMixin {
         return null;
     }
 
-    @Inject(method = "createShaders(Lnet/coderbot/iris/pipeline/SodiumTerrainPipeline;Lme/jellysquid/mods/sodium/client/render/chunk/vertex/format/ChunkVertexType;)V", at = @At("HEAD"), remap = false)
-    public void createAllPipelinesShaders(SodiumTerrainPipeline pipeline, ChunkVertexType vertexType, CallbackInfo ci){
+    @Inject(method = "createShaders", at = @At("HEAD"), remap = false)
+    public void createAllPipelinesShaders(SodiumTerrainPipeline par1, ChunkVertexType par2, CallbackInfo ci){
 
         if (VRState.vrInitialized) {
             RenderPassManager.renderPassType = RenderPassType.WORLD_ONLY;
@@ -50,7 +50,7 @@ public class IrisChunkProgramOverridesMixin {
                     pipelinePrograms.put(renderPass, renderPassShaders);
                     if (sodiumPipeline != null) {
                         try {
-                            sodiumPipeline.getClass().getMethod("patchShaders", ChunkVertexType.class).invoke(sodiumPipeline, vertexType);
+                            sodiumPipeline.getClass().getMethod("patchShaders", ChunkVertexType.class).invoke(sodiumPipeline, par2);
                         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
                             // this shouldn't happen if everything worked correctly
                             throw new RuntimeException("couldn't find 'patchShaders'");

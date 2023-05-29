@@ -25,6 +25,6 @@ public class ServerGamePacketListnerImplVRMixin {
 
     @Inject(at = @At("RETURN"), method = "noBlocksAround", cancellable = true)
     public void noBlocks(Entity entity, CallbackInfoReturnable<Boolean> cir) {
-        cir.setReturnValue(BlockPos.betweenClosedStream(entity.getBoundingBox().inflate(0.0625D).expandTowards(0.0D, -0.55D, 0.0D)).allMatch(b -> entity.level.getBlockState(b).isAir()));
+        cir.setReturnValue(BlockPos.betweenClosedStream(entity.getBoundingBox().inflate(0.0625D).expandTowards(0.0D, -0.55D, 0.0D)).allMatch(b -> entity.level().getBlockState(b).isAir()));
     }
 }

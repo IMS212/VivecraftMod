@@ -25,16 +25,12 @@ public abstract class EditBoxVRMixin extends AbstractWidget{
 	}
 
 	//TODO test
-	@Redirect(at = @At(value = "FIELD", target = "Lnet/minecraft/client/gui/components/EditBox;canLoseFocus:Z"), method = "Lnet/minecraft/client/gui/components/EditBox;mouseClicked(DDI)Z")
-	public boolean focus(EditBox instance) {
+	@Redirect(at = @At(value = "FIELD", target = "Lnet/minecraft/client/gui/components/EditBox;canLoseFocus:Z"), method = "setFocused")
+	public boolean focus(EditBox instance, boolean bl) {
+		if (bl && VRState.vrRunning) {
+			KeyboardHandler.setOverlayShowing(true);
+		}
 		return  canLoseFocus || !this.isFocused();
 	}
-
-@Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/EditBox;isFocused()Z", shift = At.Shift.BEFORE), method = "Lnet/minecraft/client/gui/components/EditBox;mouseClicked(DDI)Z", locals = LocalCapture.CAPTURE_FAILHARD)
-public void openKeyboard(double d, double e, int i, CallbackInfoReturnable<Boolean> cir, boolean bl) {
-	if (bl && VRState.vrRunning) {
-		KeyboardHandler.setOverlayShowing(true);
-	}
-}
 
 }

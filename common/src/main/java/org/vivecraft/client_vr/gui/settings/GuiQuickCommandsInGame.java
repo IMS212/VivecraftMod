@@ -1,5 +1,6 @@
 package org.vivecraft.client_vr.gui.settings;
 
+import net.minecraft.client.gui.GuiGraphics;
 import org.vivecraft.client_vr.ClientDataHolderVR;
 import com.mojang.blaze3d.vertex.PoseStack;
 
@@ -59,10 +60,10 @@ public class GuiQuickCommandsInGame extends Screen
             .build());
     }
 
-    public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks)
+    public void render(GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks)
     {
-        this.renderBackground(pMatrixStack);
-        drawCenteredString(pMatrixStack, this.font, "Quick Commands", this.width / 2, 16, 16777215);
-        super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
+        this.renderBackground(guiGraphics);
+        guiGraphics.drawCenteredString(this.font, "Quick Commands", this.width / 2, 16, 16777215);
+        super.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
     }
 }

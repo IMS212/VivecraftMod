@@ -2,6 +2,7 @@ package org.vivecraft.client_vr.gui.settings;
 
 import java.util.Arrays;
 
+import net.minecraft.client.gui.GuiGraphics;
 import org.apache.commons.lang3.ArrayUtils;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -63,9 +64,9 @@ public class GuiRadialItemsList extends ObjectSelectionList
             this.labelWidth = GuiRadialItemsList.this.mc.font.width(this.labelText);
         }
 
-        public void render(PoseStack pMatrixStack, int pIndex, int pTop, int pLeft, int pWidth, int pHeight, int pMouseX, int pMouseY, boolean pIsMouseOver, float pPartialTicks)
+        public void render(GuiGraphics guiGraphics, int pIndex, int pTop, int pLeft, int pWidth, int pHeight, int pMouseX, int pMouseY, boolean pIsMouseOver, float pPartialTicks)
         {
-            GuiRadialItemsList.this.mc.font.draw(pMatrixStack, this.labelText, (float)(GuiRadialItemsList.this.mc.screen.width / 2 - this.labelWidth / 2), (float)(pTop + pHeight - 9 - 1), 6777215);
+            guiGraphics.drawString(GuiRadialItemsList.this.mc.font, this.labelText, (GuiRadialItemsList.this.mc.screen.width / 2 - this.labelWidth / 2), (pTop + pHeight - 9 - 1), 6777215);
         }
 
 		@Override
@@ -86,7 +87,7 @@ public class GuiRadialItemsList extends ObjectSelectionList
             this.parentScreen = parent;
         }
 
-        public void render(PoseStack pMatrixStack, int pIndex, int pTop, int pLeft, int pWidth, int pHeight, int pMouseX, int pMouseY, boolean pIsMouseOver, float pPartialTicks)
+        public void render(GuiGraphics guiGraphics, int pIndex, int pTop, int pLeft, int pWidth, int pHeight, int pMouseX, int pMouseY, boolean pIsMouseOver, float pPartialTicks)
         {
             ChatFormatting chatformatting = ChatFormatting.WHITE;
 
@@ -95,7 +96,7 @@ public class GuiRadialItemsList extends ObjectSelectionList
                 chatformatting = ChatFormatting.GREEN;
             }
 
-            GuiRadialItemsList.this.mc.font.draw(pMatrixStack, chatformatting + I18n.get(this.myKey.getName()), (float)(GuiRadialItemsList.this.mc.screen.width / 2 - GuiRadialItemsList.this.maxListLabelWidth / 2), (float)(pTop + pHeight / 2 - 9 / 2), 16777215);
+            guiGraphics.drawString(GuiRadialItemsList.this.mc.font, chatformatting + I18n.get(this.myKey.getName()), (GuiRadialItemsList.this.mc.screen.width / 2 - GuiRadialItemsList.this.maxListLabelWidth / 2), (pTop + pHeight / 2 - 9 / 2), 16777215);
         }
 
         public boolean mouseClicked(double pMouseX, double p_94738_, int pMouseY)

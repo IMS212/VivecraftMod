@@ -1,5 +1,6 @@
 package org.vivecraft.client_vr.gui;
 
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
 import org.vivecraft.client_vr.gui.framework.TwoHandedScreen;
@@ -183,10 +184,10 @@ public class GuiKeyboard extends TwoHandedScreen
         }
     }
 
-    public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks)
+    public void render(GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks)
     {
-        this.renderBackground(pMatrixStack);
-        drawCenteredString(pMatrixStack, this.font, "Keyboard", this.width / 2, 2, 16777215);
-        super.render(pMatrixStack, 0, 0, pPartialTicks);
+        this.renderBackground(guiGraphics);
+        guiGraphics.drawCenteredString(this.font, "Keyboard", this.width / 2, 2, 16777215);
+        super.render(guiGraphics, 0, 0, pPartialTicks);
     }
 }

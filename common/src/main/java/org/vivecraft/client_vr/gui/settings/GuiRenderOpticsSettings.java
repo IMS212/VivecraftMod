@@ -1,5 +1,6 @@
 package org.vivecraft.client_vr.gui.settings;
 
+import net.minecraft.client.gui.GuiGraphics;
 import org.vivecraft.mod_compat_vr.iris.IrisHelper;
 import org.vivecraft.client.Xplat;
 import org.vivecraft.client_vr.VRState;
@@ -134,9 +135,9 @@ public class GuiRenderOpticsSettings extends GuiVROptionsBase
         });
     }
 
-    public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks)
+    public void render(GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks)
     {
-        super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
+        super.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
     }
 
     protected void loadDefaults()

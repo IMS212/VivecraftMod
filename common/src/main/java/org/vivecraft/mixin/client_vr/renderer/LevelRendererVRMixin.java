@@ -167,15 +167,16 @@ public abstract class LevelRendererVRMixin implements ResourceManagerReloadListe
     public void cancelPollLightUpdates(ClientLevel instance) {
     }
 
-    @Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/lighting/LevelLightEngine;runUpdates(IZZ)I"), method = "renderLevel")
-    public int runLightingUpdates(LevelLightEngine instance, int i, boolean bl, boolean bl2) {
+    @Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/lighting/LevelLightEngine;runLightUpdates()I"), method = "renderLevel")
+    public int runLightingUpdates(LevelLightEngine instance) {
+        // TODO 1.20 confirm right
         if (RenderPassType.isVanilla() || ClientDataHolderVR.getInstance().currentPass == RenderPass.LEFT) {
             this.level.getProfiler().popPush("light_update_queue");
             this.level.pollLightUpdates();
             this.level.getProfiler().popPush("light_updates");
             boolean flag = this.level.isLightUpdateQueueEmpty();
-            this.minecraft.level.getChunkSource().getLightEngine().runUpdates(Integer.MAX_VALUE, flag, true);
-            instance.runUpdates(i, bl, bl2);
+            //this.minecraft.level.getChunkSource().getLightEngine().runUpdates(Integer.MAX_VALUE, flag, true);
+            instance.runLightUpdates();
         }
         if (!RenderPassType.isVanilla()) {
             this.setShaderGroup();
